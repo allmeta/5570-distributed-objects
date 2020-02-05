@@ -5,12 +5,12 @@ const SimpleCollection <- typeobject SimpleCollection
 end SimpleCollection
 
 const set : SimpleCollection <- object set
- export operation add [name : Integer ] -> [ res : Boolean ]
-   if name == 3 then
-	   res <- true
-   else
-	   res <- false
-  end if
+  export operation add [name : Integer ] -> [ res : Boolean ]
+    if name == 3 then
+      res <- true
+    else
+      res <- false
+    end if
   end add 
   export function contains [ name : String ] -> [ res : Boolean ]
     res<-name==""
