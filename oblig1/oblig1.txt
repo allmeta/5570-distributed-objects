@@ -1,0 +1,44 @@
+Barrier:
+In theprogram I have 4 processes that are called twice (2 times)
+
+they barrier makes them wait until a condition is satisifed, i.e.
+when all the processes are waiting.
+the barrier then signals them all to continue.
+they then print out "doing something"
+
+program output in barrier.txt
+----
+prod/cons:
+
+in this program I have "market" which has two conditions: full and empty
+
+if the market is full, the producer then waits for the consumer to signal the "full" condition, so the producer can continue
+
+likewise with empty: the producer signals the consumer when the market is no longer empty, so it can continue
+
+the program stops at the end of the sequence: 30
+
+program output in prod-cons.txt
+
+kilroy:
+----
+local:
+output in kilroy.txt
+
+
+3 nodes: ple41.planet-lab.eu
+ple42.planet-lab.eu
+ple43.planet-lab.eu
+output in kilroy2.txt
+-----
+4 nodes 500km away from each other:
+
+It performed a lot worse as the machines/sec went from 6k to around 30
+icnalplabs1.epfl.ch 
+csl13.openspace.nl
+planetlab-1.ing.unimo.it
+ple2.cesnet.cz
+
+Output in kilroy4.txt
+
+

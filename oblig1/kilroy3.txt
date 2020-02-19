@@ -1,0 +1,5 @@
+Starting on ple43.planet-lab.eu
+3 nodes active.
+Kilroy was here
+Back home.  Total time = 0:004263
+Total machines visitable in 1 second: 703.73

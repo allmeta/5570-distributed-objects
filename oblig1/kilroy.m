@@ -3,7 +3,7 @@ const Kilroy <- object Kilroy
     const home <- locate self
     var there :     Node
     var startTime,diff: Time
-    var totalMachines:Integer
+    var totalMachines:Real
     var all : NodeList
     var theElem :NodeListElement
     var stuff : Real
@@ -19,7 +19,8 @@ const Kilroy <- object Kilroy
     end for
     refix Kilroy at home
     diff <- home.getTimeOfDay - startTime
-    totalMachines<-1000000/diff.getmicroseconds*(all.upperBound+1)
+    var timeAsInteger:Real<-diff.getseconds.asReal+diff.getmicroseconds.asreal/1000000.0
+    totalMachines<-(all.upperBound.asreal+1.0)/timeAsInteger
     home$stdout.PutString["Back home.  Total time = " || diff.asString || "\n"]
     home$stdout.putString["Total machines visitable in 1 second: "||totalMachines.asString||"\n"]
   end process

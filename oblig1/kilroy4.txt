@@ -1,0 +1,6 @@
+Emerald listening on port 23280 5af0, epoch 55034 d6fa
+Starting on ple2.cesnet.cz
+4 nodes active.
+Kilroy was here
+Back home.  Total time = 0:142438
+Total machines visitable in 1 second: 28.0824
