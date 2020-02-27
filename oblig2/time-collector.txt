@@ -1,0 +1,16 @@
+Emerald listening on port 17114 42da, epoch 12371 3053
+Starting on csl13.openspace.nl
+4 nodes active.
+TimeCollector was here
+csl13.openspace.nl
+1582809461:282805
+---------
+kulcha.mimuw.edu.pl
+1582809461:384579
+---------
+ple2.cesnet.cz
+1582809461:543356
+---------
+planetlab-1.ing.unimo.it
+1582809461:638866
+---------

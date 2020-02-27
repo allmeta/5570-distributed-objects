@@ -1,8 +1,0 @@
-Starting on 76991cc2ff8e
-3 nodes active.
-Kilroy was here
-Back home.  Total time = 0:000505
-Total machines visitable in 1 second: 5940
-Emerald listening on port 17099 42cb, epoch 55480 d8b8
-Executed 1279 bytecodes in 0.00 seconds
-Received 7 messages (2532 bytes), sent 9 messages (2056 bytes)
