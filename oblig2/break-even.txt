@@ -1,0 +1,25 @@
+Size:			50
+callByMove time:	0.061586
+callByVisit time:	0.061639
+Break even: 		1.00086
+-----
+Size:			100
+callByMove time:	0.061597
+callByVisit time:	0.061581
+Break even: 		0.99974
+-----
+Size:			500
+callByMove time:	0.061639
+callByVisit time:	0.06178
+Break even: 		1.00229
+-----
+Size:			1000
+callByMove time:	0.061618
+callByVisit time:	0.061853
+Break even: 		1.00381
+-----
+Size:			10000
+callByMove time:	0.061572
+callByVisit time:	0.093524
+Break even: 		1.51894
+-----

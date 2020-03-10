@@ -1,21 +1,42 @@
 4 nodes active.
-name:	planetlab2.xeno.cl.cam.ac.uk
-est:	1583863778:706181
+name:	planetlab-1.ing.unimo.it
+est:	1583877555:209110
 Rtt:	0:000006
-Diff:	-1:999993
+Diff:	0:000000
 --------
 name:	cse-white.cse.chalmers.se
-est:	1583863778:736712
-Rtt:	0:030700
-Diff:	-1:969525
+est:	1583877555:260697
+Rtt:	0:043099
+Diff:	0:008456
+--------
+name:	planetlab2.xeno.cl.cam.ac.uk
+est:	1583877555:340619
+Rtt:	0:037581
+Diff:	0:007682
 --------
 name:	csl13.openspace.nl
-est:	1583863778:782354
-Rtt:	0:015132
-Diff:	-1:985481
+est:	1583877555:402248
+Rtt:	0:027222
+Diff:	0:004550
 --------
+4 nodes active.
 name:	planetlab-1.ing.unimo.it
-est:	1583863778:826691
-Rtt:	0:031673
-Diff:	-1:971487
+est:	1583877565:425047
+Rtt:	0:000007
+Diff:	0:000002
+--------
+name:	cse-white.cse.chalmers.se
+est:	1583877565:476716
+Rtt:	0:043176
+Diff:	0:008461
+--------
+name:	planetlab2.xeno.cl.cam.ac.uk
+est:	1583877565:556802
+Rtt:	0:037659
+Diff:	0:007702
+--------
+name:	csl13.openspace.nl
+est:	1583877565:618673
+Rtt:	0:027285
+Diff:	0:004567
 --------

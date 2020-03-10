@@ -8,7 +8,6 @@ const remoteObject<-object remoteObject
   end callByVisit
 end remoteObject
 
-
 const main <- object main
   const home<-locate self
   const arraySizes <- {50,100,500,1000,10000}  
@@ -33,7 +32,6 @@ const main <- object main
       const moveTime<-self.toSeconds[endReqTime-startReqTime]
       stdout.putstring["callByMove time:\t"||moveTime.asstring||"\n"]
 
-
       move arg to remote
       startReqTime<-home$timeofday
       remoteObject.callByVisit[arg,home]
@@ -42,7 +40,7 @@ const main <- object main
 
       stdout.putstring["callByVisit time:\t"||visitTime.asstring||"\n"]
 
-      stdout.putstring["Break even: \t\t"||(visitTime/moveTime-1.0).asstring||"\n"]
+      stdout.putstring["Break even: \t\t"||(visitTime/moveTime).asstring||"\n"]
       stdout.putstring["-----\n"]
     end for
   end process
