@@ -18,11 +18,11 @@ const nopester <- object nopester
     "Ipossimu dignissimos vsur eoluptates"
   }
   initially
-    % if all.upperbound >= 2 then
+    if all.upperbound >= 2 then
       self.test
-    % else
-      % stdout.putstring["Need at least 3 nodes" || all.upperbound.asstring || "\n"]
-    % end if
+    else
+      stdout.putstring["Need at least 3 nodes" || all.upperbound.asstring || "\n"]
+    end if
   end initially
 
   export op createPeer [name:String,f:ImmutableVector.of[String]]
@@ -45,8 +45,6 @@ const nopester <- object nopester
     for i in all
       if i$thenode!==here then
         distNodes.addupper[i$thenode]
-      else
-        stdout.putstring["here\n"]
       end if
 
     end for
@@ -56,16 +54,13 @@ const nopester <- object nopester
     end for 
     
     % tests
-    self.dump
+    self.log
     self.testDownload
-    self.dump
+    self.log
     self.testRemove
-    self.dump
+    self.log
     self.testUpdate
-    self.dump
-    % failure
-    %   stdout.putstring["what the fuck\n"]
-    % end failure
+    self.log
     end  
   end test
 
@@ -97,7 +92,7 @@ const nopester <- object nopester
     end for
   end testDownload
 
-  export op dump
+  export op log
     stdout.putstring["Peers:\n"]
     for i in peers
       stdout.putstring[i.getname || "\t" || (locate i)$name || "\n"]
@@ -132,6 +127,6 @@ const nopester <- object nopester
         end
       end for
     end for
-  end dump
+  end log
 end nopester
 
