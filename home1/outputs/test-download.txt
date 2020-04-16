@@ -1,0 +1,82 @@
+Test download file
+Peers:
+peer0	csl12.openspace.nl
+	peer0file0	Sit accusamus et laudantium dolorem maxime quibusdam
+	peer0file1	Ducimus explicabo nemo ut nobis et quis neque.
+	peer0file2	Doloremque et voluptas cum ipsa quae
+	peer2file1-downloaded	aut voluptas assumenda.
+peer1	mars.planetlab.haw-hamburg.de
+	peer1file0	Doloremque et voluptas cum ipsa quae
+	peer1file1	Velit numquam sit ea dolorem.
+	peer1file2	Aspernatur id eum exercitationem cumque
+peer2	csl12.openspace.nl
+	peer2file0	Aspernatur id eum exercitationem cumque
+	peer2file1	aut voluptas assumenda.
+	peer2file2	At facilis voluptatem sed possimus.
+peer3	mars.planetlab.haw-hamburg.de
+	peer3file0	At facilis voluptatem sed possimus.
+	peer3file1	Exercitationem dolorem vitae omnis ut odio
+	peer3file2	Iure dignissimos voluptates possimus
+peer4	csl12.openspace.nl
+	peer4file0	Iure dignissimos voluptates possimus
+	peer4file1	Sequi ipsum dolorem quae eos earum facilis
+	peer4file2	Ipossimu dignissimos vsur eoluptates
+
+index_hash_peers:
+1017777033:
+	peer0	csl12.openspace.nl
+	peer1	mars.planetlab.haw-hamburg.de
+1051213869:
+	peer3	mars.planetlab.haw-hamburg.de
+1157228687:
+	peer0	csl12.openspace.nl
+1212507938:
+	peer2	csl12.openspace.nl
+	peer0	csl12.openspace.nl
+1427194395:
+	peer3	mars.planetlab.haw-hamburg.de
+	peer4	csl12.openspace.nl
+200800334:
+	peer4	csl12.openspace.nl
+2141723922:
+	peer0	csl12.openspace.nl
+378503417:
+	peer4	csl12.openspace.nl
+536937215:
+	peer1	mars.planetlab.haw-hamburg.de
+	peer2	csl12.openspace.nl
+771712821:
+	peer1	mars.planetlab.haw-hamburg.de
+958669931:
+	peer2	csl12.openspace.nl
+	peer3	mars.planetlab.haw-hamburg.de
+
+index_hash_name:
+1017777033:
+	peer0file2
+	peer1file0
+1051213869:
+	peer3file1
+1157228687:
+	peer0file0
+1212507938:
+	peer2file1
+	peer2file1-downloaded
+1427194395:
+	peer3file2
+	peer4file0
+200800334:
+	peer4file1
+2141723922:
+	peer0file1
+378503417:
+	peer4file2
+536937215:
+	peer1file2
+	peer2file0
+771712821:
+	peer1file1
+958669931:
+	peer2file2
+	peer3file0
+
