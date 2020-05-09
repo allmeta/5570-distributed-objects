@@ -29,9 +29,9 @@ const framework <- object framework
   % node name -> node
   const index_nname_node <- Directory.create
   const here <- locate self
+  var a: NodeList<-here$activenodes
 
   export op replicateMe[x:myObject,n:Integer]
-    const a<-here$activenodes
     var min:Integer
     if a.upperbound<n then %ikke slurv
       min<-a.upperbound+1
@@ -107,4 +107,40 @@ const framework <- object framework
     index_oname_master.remove[name]
     index_oname_master.insert[newname,master]
   end updateMe
+  export op updatenodes[droppednodelist:NodeList,newnodelist:NodeList]
+    % redistribute lost objects in nodes
+    for n in droppednodelist
+      const onames<-view index_nname_onames.lookup[n$name] as Array.of[String]
+      % find available node to distribute for each object
+      for oname in onames
+        
+      end for
+    end for
+  end updatenodes
+  process
+    % check every 10 sec if active nodes have changed
+    % then redistribute lost objects in nodes
+    const b<-here$activenodes
+    if a!==b then
+      var newnodelist:NodeList
+      var droppednodelist:NodeList
+      for i in b
+        var added:Boolean<-false
+        for j in a
+          if i==j then
+            added<-true
+            newnodelist.addupper[i]
+            exit
+          end if
+        end for
+        if added==true then
+          droppednodelist.addupper[i]
+        end if
+      end for
+      a<-newnodelist
+      self.updatenodes[droppednodelist,newnodelist]
+    end if
+    % every 10 sec
+    here$delay[Time.create[10,0]]
+  end process
 end framework
