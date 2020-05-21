@@ -87,12 +87,12 @@ const framework <- object framework
     fix clone at node
   end addobject
 
-  export op updateMe[x:kms,name:String,newtime:Time,newname:String]
+  export op updateMe[x:kms,name:String,newname:String]
     const objects<-view index_oname_objects.lookup[name] as Array.of[kms]
     % call update on all objects
     if objects!==nil then
       for o in objects
-        o.update[newtime,newname]
+        o.update[newname]
       end for
     end if
     % update oname_nnames index

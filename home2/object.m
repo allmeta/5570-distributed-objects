@@ -1,20 +1,19 @@
 export testObject
 
-const testObject <- class testObjectClass [time:Time,name:String]
+const testObject <- class testObjectClass [name:String]
   export op getName->[res:String]
     res<-name
   end getName
   export op getTime->[res:Time]
-    res<-time
+    res<-(locate self)$timeofday
   end getTime
   export op cloneMe->[res:kms]
-    res<-testObject.create[time,name]
+    res<-testObject.create[name]
   end cloneMe
-  export op update[newTime:Time,newName:String]
+  export op update[newName:String]
     name<-newName
-    time<-newTime
   end update
-  export op requestUpdate[newTime:Time,newName:String]
-    framework.updateMe[self,name,newTime,newName]
+  export op requestUpdate[newName:String]
+    framework.updateMe[self,name,newName]
   end requestUpdate
 end testObjectClass
