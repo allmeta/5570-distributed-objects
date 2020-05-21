@@ -32,6 +32,7 @@ const framework <- object framework
   var a: NodeList<-here$activenodes
 
   export op replicateMe[x:myObject,n:Integer]
+    % go through max nodes or until it reaches n
     var min:Integer
     if a.upperbound<n then %ikke slurv
       min<-a.upperbound+1
@@ -51,14 +52,14 @@ const framework <- object framework
     for (i<-0 : i<min : i<-i+1)
       const m<-a[i]$thenode
       if m!==here then
-        if assigned==true then
+        if assigned==false then
           const clone<-x.cloneMe
           objects.addupper[clone]
           self.addobject[clone,m]
         else
           % assign master at first node
-          index_oname_master.insert[x$name,m$name]
-          fix x at m
+          self.addobject[x,m]
+          assigned<-false
         end if
       end if
     end for
@@ -66,9 +67,14 @@ const framework <- object framework
     index_oname_objects.insert[x$name,objects]
   end replicateMe
 
-  export op addobject[clone:myObject,node:NodeListElement]
+  export op addobject[clone:myObject,node:NodeListElement,master:Boolean]
     const nname<-node$name
     const oname<-clone$name
+
+    % if master, then replace master obj
+    if master==true then
+      index_oname_master.insert[oname,nname]
+    end if
 
     % add nodename to oname_nnames index
     var nnames:Array.of[String]<-view index_oname_nnames.lookup[oname] as Array.of[String]
@@ -136,6 +142,7 @@ const framework <- object framework
               exit
             end if
           end for
+          % exit out of innermost loop
           if available_n!==nil then
             exit
           end if
@@ -143,17 +150,38 @@ const framework <- object framework
 
         var clone:myObject
         const master_nn<-view index_oname_master.lookup[oname] as String
+        var mbool:Boolean<-false
         if master_nn==n$name then
-          % find available object
           % should probably check for more shit
-          clone<-(view index_oname_objects.lookup[oname] as Array.of[myObject])[0].cloneMe
+          % find new master object from new list of available nodes
+          % indexes are not yet updated
+          clone<-(view index_oname_objects.lookup[oname] as Array.of[myObject])[1].cloneMe
+          % update master index
+          mbool<-true
         else
-          const master_node<-view index_nname_node.lookup[master_nn] as NodeListElement
-          clone<-master_node.cloneMe
+          % find master object
+          for nn in (view index_nname_onames.lookup[master_nn] as String)
+            if nn==oname then
+              clone<-master_node.cloneMe
+              exit
+            end if
+          end for
         end if
         % add object to indexes and fix it to node
-        self.addobject[clone,available_n]
+        self.addobject[clone,available_n, mbool]
+
+        % remove index_oname_nnames nname
+        const active_nnames<-Array.of[String].empty
+        for nn in (view index_oname_nnames.lookup[oname] as Array.of[String])
+          if nn!=n$name then
+            active_nnames.addupper[nn] 
+          end if
+        end for
+        index_oname_nnames.insert[oname, active_nnames]
       end for
+      % remove node related indexes
+      index_nname_onames.remove[n$name]
+      index_nname_node.remove[n$name]
     end for
   end updatenodes
 
@@ -161,7 +189,7 @@ const framework <- object framework
     % check every 10 sec if active nodes have changed
     % then redistribute lost objects in nodes
     const b<-here$activenodes
-    if a!==b then
+    if a.upperbound!==b.upperbound then % only checking length, since array equality is tedious in emerald
       var newnodelist:NodeList
       var droppednodelist:NodeList
       for i in b
