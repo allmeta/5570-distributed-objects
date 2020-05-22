@@ -8,58 +8,58 @@ const framework <- object framework
   const index_oname_m<- Directory.create
   % node name -> [object name]
   const index_nname_onames <- Directory.create
-  % object name -> [object]
-  const index_oname_objects <- Directory.create
   % node name -> node
   const index_nname_node <- Directory.create
+  % (node name + object name) -> object
+  const index_nnon_object <- Directory.create
+
   const here <- locate self
-  var a: Array.of[NodeListElement]
 
   % create 
-  initially
+  process
+    here$stdout.putstring["===INIT===\n"]
     for i in here$activenodes
-      a.addupper[i]
+      index_nname_node.insert[i$thenode$name,i$thenode]
     end for
-  end initially
+    here.setNodeEventHandler[self]
+  end process
 
-  export op replicateMe[x:kms,n:Integer]
+  export op replicateMe[x:testObjectType,n:Integer] -> [res:Array.of[testObjectType]]
+    const nnames<-index_nname_node.list
     % go through max nodes or until it reaches n
     var min:Integer
-    if a.upperbound<n then %ikke slurv
-      min<-a.upperbound+1
+    if nnames.upperbound<n then %ikke slurv
+      min<-nnames.upperbound+1
     else
       min<-n
     end if
+    min<-min+1 % add master
 
-    % add object to oname_object index
-    index_oname_objects.insert[x$name,x]
+    % objects to return
+    const objects<-Array.of[testObjectType].empty
 
-    % objects to add to index_oname_objects
-    const objects<-Array.of[kms].empty
-    objects.addupper[x]
-
-    var assigned:Boolean<-false
+    var master:Boolean<-true
     var i:Integer
-    for (i<-0 : i<min : i<-i+1)
-      const m<-a[i]
-      if m$thenode!==here then
-        if assigned==false then
+    for (i<-0 : i<=min : i<-i+1)
+
+      const m<-view index_nname_node.lookup[nnames[i]] as Node
+      if m!==here then
+        if master==false then
           const clone<-x.cloneMe
           objects.addupper[clone]
-          self.addobject[clone,m,false]
+          self.addobject[clone,nnames[i],false]
         else
           % assign master at first node
-          self.addobject[x,m,true]
-          assigned<-false
+          self.addobject[x,nnames[i],true]
+          master<-false
         end if
       end if
     end for
-    % add objects to index_oname_objects
-    index_oname_objects.insert[x$name,objects]
+    res<-objects
   end replicateMe
 
-  export op addobject[clone:kms,node:NodeListElement,master:Boolean]
-    const nname<-node$thenode$name
+  export op addobject[clone:testObjectType,nname:String,master:Boolean]
+    const nd<-view index_nname_node.lookup[nname] as Node
     const oname<-clone$name
 
     % if master, then replace master obj
@@ -67,6 +67,9 @@ const framework <- object framework
       index_oname_mnn.insert[oname,nname]
       index_oname_m.insert[oname,clone]
     end if
+
+    % add to nnon index
+    index_nnon_object.insert[nname || oname,clone]
 
     % add nodename to oname_nnames index
     var nnames:Array.of[String]<-view index_oname_nnames.lookup[oname] as Array.of[String]
@@ -78,25 +81,23 @@ const framework <- object framework
 
     % add oname to nname_oname index
     var onames:Array.of[String]<-view index_nname_onames.lookup[nname] as Array.of[String]
-    if onames!==nil then
+    if onames==nil then
       onames<-Array.of[String].empty
     end if
     onames.addupper[oname]
     index_nname_onames.insert[nname,onames] 
     % fix 
-    fix clone at node
+    fix clone at nd
   end addobject
 
-  export op updateMe[x:kms,name:String,newname:String]
-    const objects<-view index_oname_objects.lookup[name] as Array.of[kms]
-    % call update on all objects
-    if objects!==nil then
-      for o in objects
-        o.update[newname]
-      end for
-    end if
-    % update oname_nnames index
+  export op updateMe[x:testObjectType,name:String,newname:String]
     const nnames<-view index_oname_nnames.lookup[name] as Array.of[String]
+    % call update on all objects
+    for n in nnames
+      const o<-(view index_nnon_object.lookup[n || name] as testObjectType)
+      o.update[newname]
+    end for
+    % update oname_nnames index
     index_oname_nnames.delete[name]
     index_oname_nnames.insert[newname,nnames]
     % update nname_onames index
@@ -110,96 +111,120 @@ const framework <- object framework
         end if
       end for
       index_nname_onames.insert[n,newOnames]
+      % update nnon index
+      const o<-view index_nnon_object.lookup[n || name] as testObjectType
+      index_nnon_object.delete[n || name]
+      index_nnon_object.insert[n || newname,o]
     end for
     % update master index
     const mnn <- view index_oname_mnn.lookup[name] as String
     index_oname_mnn.delete[name]
     index_oname_mnn.insert[newname,mnn]
 
-    const mo <- view index_oname_m.lookup[name] as kms
+    const mo <- view index_oname_m.lookup[name] as testObjectType
     index_oname_m.delete[name]
     index_oname_m.insert[newname,mo]
   end updateMe
 
-  export op updatenodes[droppednodelist:Array.of[NodeListElement],newnodelist:Array.of[NodeListElement]]
-    % redistribute lost objects in nodes
-    for n in droppednodelist
-      const onames<-view index_nname_onames.lookup[n$thenode$name] as Array.of[String]
-      % find available node to distribute for each object
-      for oname in onames
-        % check if master too
-        const taken_nnames <- view index_oname_nnames.lookup[oname] as Array.of[String]
-        var available_n:NodeListElement
-        % diff two lists to check what nodes are not already occupied by the object
-        for nn in newnodelist
-          for tnn in taken_nnames
-            if nn$thenode$name!=tnn then
-              available_n<-nn
-              exit
-            end if
-          end for
-          % exit out of innermost loop
-          if available_n!==nil then
-            exit
-          end if
-        end for
+  export op getObject[name:String]->[res:testObjectType]
+    res<-view index_oname_m.lookup[name] as testObjectType
+  end getObject
 
-        var clone:kms
-        const master_nn<-view index_oname_mnn.lookup[oname] as String
-        var mbool:Boolean<-false
-        if master_nn==n$thenode$name then
-          % should probably check for more shit
-          % find new master object from new list of available nodes
-          % indexes are not yet updated
-          clone<-(view index_oname_objects.lookup[oname] as Array.of[kms])[1].cloneMe
-          % update master index
-          mbool<-true
-        else
-          % find master object
-          clone <- view index_oname_m.lookup[oname] as kms
+  export op nodeUp[n:Node,t:Time]
+    here$stdout.putstring["===NODE UP===\n"]
+    const nname <- n$name
+    index_nname_node.insert[nname,n]
+  end nodeUp
+    
+  export op nodeDown[nd:Node,t:Time]
+    here$stdout.putstring["===NODE DOWN===\n"]
+    var nname:String
+    % find node that went down
+    for n in index_nname_node.list
+      var found:Boolean<-false
+      for an in here$activenodes
+        if n==an$thenode$name then
+          found<-true
+          exit
         end if
-        % add object to indexes and fix it to node
-        self.addobject[clone,available_n, mbool]
-
-        % remove index_oname_nnames nname
-        const active_nnames<-Array.of[String].empty
-        for nn in (view index_oname_nnames.lookup[oname] as Array.of[String])
-          if nn!=n$thenode$name then
-            active_nnames.addupper[nn] 
-          end if
-        end for
-        index_oname_nnames.insert[oname, active_nnames]
       end for
-      % remove node related indexes
-      index_nname_onames.delete[n$thenode$name]
-      index_nname_node.delete[n$thenode$name]
+      if found==false then
+        % found dead node
+        nname<-n
+        exit
+      end if
     end for
-  end updatenodes
-
-  process
-    % check every 10 sec if active nodes have changed
-    % then redistribute lost objects in nodes
-    const b<-here$activenodes
-    if a.upperbound!==b.upperbound then % only checking length, since array equality is tedious in emerald
-      var newnodelist:Array.of[NodeListElement]
-      var droppednodelist:Array.of[NodeListElement]
-      for i in b
-        var added:Boolean<-false
-        for j in a
-          if i==j then
-            added<-true
-            newnodelist.addupper[i]
+    % update indexes
+    % nname_node
+    index_nname_node.delete[nname]
+    const onames <- view index_nname_onames.lookup[nname] as Array.of[String]
+    if onames==nil then
+      return
+    end if
+    for o in onames
+      % nnon
+      index_nnon_object.delete[nname || o]
+      % oname_nnames
+      const nn <- view index_oname_nnames.lookup[o] as Array.of[String]
+      const newnn<-Array.of[String].empty
+      for n in nn
+        if n!=nname then
+          newnn.addupper[n]
+        end if
+      end for
+      index_oname_nnames.insert[o,newnn]
+      % check master
+      var clone:testObjectType
+      if (view index_oname_mnn.lookup[o] as String)==nname then
+        % choose new master 
+        const nnames <- view index_oname_nnames.lookup[o] as Array.of[String]
+        for n in nnames
+          const ob <- view index_nnon_object.lookup[n || o] as testObjectType
+          if ob!==nil then
+            clone<-ob
+            % update master index
+            index_oname_mnn.insert[o,n]
+            index_oname_m.insert[o,ob]
             exit
           end if
         end for
-        if added==true then
-          droppednodelist.addupper[i]
+      else
+        % replicate node if enough available
+        clone<-view index_oname_m.lookup[o] as testObjectType
+      end if
+      % find available node to replicate on
+      const takenn<-view index_oname_nnames.lookup[o] as Array.of[String]
+      var availableN:String
+      for n in index_nname_node.list
+        for tn in takenn
+          if n!=tn then
+            availableN<-n
+            self.addobject[clone.cloneMe,availableN, false]
+            exit
+          end if
+        end for
+        if availableN!==nil then
+          exit
         end if
       end for
-      a<-newnodelist
-      self.updatenodes[droppednodelist,newnodelist]
-    end if
-    % every 10 sec
-    here.delay[Time.create[10,0]]
-  end process
+      here$stdout.putstring["===No available nodes for replication===\n"]
+    end for
+  end nodeDown
+
+  export op dump
+    here$stdout.putstring["==DUMP==\n"]
+    for i in index_oname_nnames.list
+      here$stdout.putstring["object " || i.asstring || "\n"]
+      for j in (view index_oname_nnames.lookup[i] as Array.of[String])
+        here$stdout.putstring["\t->node " || j.asstring || "\n"]
+      end for
+    end for
+    for i in index_nname_onames.list
+      here$stdout.putstring["node " || i.asstring || "\n"]
+      for j in (view index_nname_onames.lookup[i] as Array.of[String])
+        here$stdout.putstring["\t->object " || j.asstring || "\n"]
+      end for
+    end for
+    here$stdout.putstring["==DUMP FINISH==\n"]
+  end dump
 end framework

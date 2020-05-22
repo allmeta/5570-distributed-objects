@@ -1,9 +1,9 @@
-export kms
-const kms <- typeobject kms 
+export testObjectType
+const testObjectType <- typeobject testObjectType 
   op getname->[res:String]
   op gettime->[res:Time]
-  op cloneMe->[res:kms]
+  op cloneMe->[res:testObjectType]
   op update[n:String]
   op requestUpdate[newName:String]
-end kms
+end testObjectType
 

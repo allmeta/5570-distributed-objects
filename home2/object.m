@@ -7,7 +7,7 @@ const testObject <- class testObjectClass [name:String]
   export op getTime->[res:Time]
     res<-(locate self)$timeofday
   end getTime
-  export op cloneMe->[res:kms]
+  export op cloneMe->[res:testObjectType]
     res<-testObject.create[name]
   end cloneMe
   export op update[newName:String]
