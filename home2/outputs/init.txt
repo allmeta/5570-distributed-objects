@@ -1,0 +1,20 @@
+===INIT===
+name server tests
+
+==DUMP==
+object x1
+	->node csl12.openspace.nl
+	->node mars.planetlab.haw-hamburg.de
+	->node planetlab1.u-strasbg.fr
+object y1
+	->node csl12.openspace.nl
+	->node mars.planetlab.haw-hamburg.de
+node csl12.openspace.nl
+	->object x1
+	->object y1
+node mars.planetlab.haw-hamburg.de
+	->object x1
+	->object y1
+node planetlab1.u-strasbg.fr
+	->object x1
+==DUMP FINISH==

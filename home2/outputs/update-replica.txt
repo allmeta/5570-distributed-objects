@@ -1,0 +1,19 @@
+update through replica test 
+
+==DUMP==
+object x2
+	->node csl12.openspace.nl
+	->node mars.planetlab.haw-hamburg.de
+	->node planetlab1.u-strasbg.fr
+object y1
+	->node csl12.openspace.nl
+	->node mars.planetlab.haw-hamburg.de
+node csl12.openspace.nl
+	->object x2
+	->object y1
+node mars.planetlab.haw-hamburg.de
+	->object x2
+	->object y1
+node planetlab1.u-strasbg.fr
+	->object x2
+==DUMP FINISH==
