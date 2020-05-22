@@ -151,6 +151,7 @@ const framework <- object framework
       if found==false then
         % found dead node
         nname<-n
+        here$stdout.putstring["Down -> " || nname || "\n"]
         exit
       end if
     end for
@@ -163,6 +164,7 @@ const framework <- object framework
     end if
     for o in onames
       % nnon
+      here$stdout.putstring["object -> " || o || "\n"]
       index_nnon_object.delete[nname || o]
       % oname_nnames
       const nn <- view index_oname_nnames.lookup[o] as Array.of[String]
@@ -170,6 +172,7 @@ const framework <- object framework
       for n in nn
         if n!=nname then
           newnn.addupper[n]
+          here$stdout.putstring["nn added -> " || n || "\n"]
         end if
       end for
       index_oname_nnames.insert[o,newnn]
@@ -183,6 +186,7 @@ const framework <- object framework
           if ob!==nil then
             clone<-ob
             % update master index
+            here$stdout.putstring["new master: " || o || " -> " || n || "\n"]
             index_oname_mnn.insert[o,n]
             index_oname_m.insert[o,ob]
             exit
@@ -193,22 +197,28 @@ const framework <- object framework
         clone<-view index_oname_m.lookup[o] as testObjectType
       end if
       % find available node to replicate on
-      const takenn<-view index_oname_nnames.lookup[o] as Array.of[String]
       var availableN:String
       for n in index_nname_node.list
-        for tn in takenn
-          if n!=tn then
-            availableN<-n
-            self.addobject[clone.cloneMe,availableN, false]
+        var good:Boolean<-true
+        for tn in newnn
+          if n==tn then
+            good<-false
             exit
           end if
         end for
-        if availableN!==nil then
+        if good==true then
+          availableN<-n
+          here$stdout.putstring["found available node -> " || n || "\n"]
+          self.addobject[clone.cloneMe,availableN, false]
           exit
         end if
       end for
-      here$stdout.putstring["===No available nodes for replication===\n"]
+      if availableN==nil then
+        here$stdout.putstring["===No available nodes for replication===\n"]
+      end if
     end for
+    % nname_onames index
+    index_nname_onames.delete[nname]
   end nodeDown
 
   export op dump
